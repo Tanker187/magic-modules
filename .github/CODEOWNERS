@@ -1,0 +1,29 @@
+# Code owners file.
+# This file controls who is tagged for review for any given pull request.
+#
+# Place this file at the repository root or in .github/CODEOWNERS
+
+# Default owners for everything (keeps your existing owners)
+*  @googleapis/python-core-client-libraries @ShannonFletcher
+
+# Owners for build / CI configuration
+# - Cloud Build config files (cloudbuild.yaml / cloudbuild.yml)
+cloudbuild.yaml       @googleapis/python-core-client-libraries @Tanker187
+cloudbuild.yml        @googleapis/python-core-client-libraries @Tanker187
+/cloudbuild/**        @googleapis/python-core-client-libraries @Tanker187
+
+# Owners for GitHub Actions and workflows
+.github/workflows/**  @googleapis/python-core-client-libraries @Tanker187
+
+# Google Cloud Build / global (gtm-kqqwvx2-zgi2z)
+# Mapped to GitHub user/team below — replace with a team if needed (e.g., @my-org/cloud-build)
+gtm-kqqwvx2-zgi2z     @Tanker187
+
+# Optional: owners for Terraform / infra (if present)
+terraform/**          @googleapis/python-core-client-libraries @Tanker187
+
+# Notes:
+# - Lines are "pattern <owners...>" where pattern is a file path or glob and owners
+#   are GitHub usernames, teams (org/team), or email addresses.
+# - GitHub resolves the first matching pattern from top to bottom; place more specific
+#   patterns above less-specific ones if you need overrides.
