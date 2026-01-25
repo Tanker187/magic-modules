@@ -54,7 +54,7 @@ If this is the project you meant to add, tell me the repo URL, a 1–2 sentence 
 
 - Website / Portfolio: https://www.nodoubtz.com 
   
-- Twitter / X: https://twitter.com/nodoubtzrecordlabel
+- Twitter / X: https://twitter.com/nodoubtz
 
 
 ---
