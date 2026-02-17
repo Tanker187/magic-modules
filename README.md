@@ -1,20 +1,33 @@
-# Hi there 👋 I'm Shannon Fletcher
-A passionate developer building useful, reliable, and beautiful software. I love solving hard problems, shipping production systems, and collaborating on open-source projects.
+# Magic Modules
 
----
+**Add Google Cloud Platform support to Terraform**
 
-## 🚀 About Me
-- 🔭 I’m currently working on: Google Cloud Build pipelines and global tag management (GTM container: `gtm-kqqwvx2-zgi2z`)
-- 🌱 I’m learning: [Tech / Topic you're learning]
-- 👯 I’m looking to collaborate on: Cloud infrastructure, CI/CD automation, and observability
-- 💬 Ask me about: Cloud Build, Google Tag Manager, deployment automation, and infrastructure-as-code
-- ⚡ Fun fact: [Short fun fact about you]
+Magic Modules is a code generation framework that automatically generates Terraform providers for Google Cloud Platform (GCP) resources. This repository contains the tooling and templates needed to generate, test, and maintain GCP Terraform provider code.
 
----
+## 📋 Overview
 
-## 🛠️ Technologies & Tools
-I focus on reliable, automated delivery and scalable cloud infrastructure.
+Magic Modules is a fork of the [GoogleCloudPlatform/magic-modules](https://github.com/GoogleCloudPlatform/magic-modules) project. It provides an automated approach to creating and maintaining Terraform provider code for GCP services, reducing manual effort and ensuring consistency across provider implementations.
 
+**Repository Details:**
+- **Language:** Go Template
+- **License:** Apache License 2.0
+- **Default Branch:** main
+- **Status:** Active (last updated: February 17, 2026)
+
+## 🚀 Quick Start
+
+### Prerequisites
+- Go Template knowledge
+- Understanding of Terraform provider development
+- Docker or development container setup
+
+### Setup Development Environment
+
+The repository includes a `.devcontainer` configuration for Docker-based development:
+
+```bash
+# Open in VS Code with dev container
+# Or manually set up your environment using the provided configuration
 Languages & Platforms
 - Python · Go · JavaScript / TypeScript
 
