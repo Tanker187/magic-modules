@@ -1,41 +1,69 @@
 steps:
-  - name: 'gcr.io/cloud-builders/docker'
-    id: 'tag-and-push'
-    script: |
-      #!/bin/sh
-      set -e
-      docker build -t $_IMAGE .
-      docker push "$_IMAGE"
-      docker inspect $_IMAGE --format "$_IMAGE@{{.Id}}" >image_with_digest
-  - name: 'gcr.io/cloud-builders/gcloud'
-    id: 'generate-token'
-    script: |
-      #!/bin/sh
-      set -e
-      gcloud auth print-identity-token --audiences=sigstore > token
-  - name: 'gcr.io/cloud-builders/docker'
-    id: 'sign-image'
-    script: |
-      #!/bin/sh
-      set -e
-      docker run \
-      --network=cloudbuild \
-      --mount source=home-volume,target=/builder/home \
-      --rm \
-      -e SIGSTORE_NO_CACHE=true \
-      -e HOME=/builder/home \
-      gcr.io/projectsigstore/cosign \
-      sign --identity-token=$(cat token) $(cat image_with_digest) -y
-  service_account: '$_SERVICE_ACCOUNT'
-  artifacts:
-    images:
-    - $_IMAGE
-  substitutions:
-    _IMAGE: 'global -docker.pkg.dev/gtm-kqqwvx2-zgi2z/Tanker187/magic-modules/us.gcr.io/gtm-kqqwvx2-zgi2z/app-engine-tmp/app/ttl-2h:e8d16cb3-7859-47a0-a9cd-371f627854d3'
-    _SERVICE_ACCOUNT_ID: '118062373027529706263'
-    _SERVICE_ACCOUNT: projects/${PROJECT_ID}/serviceAccounts/${_SERVICE_ACCOUNT_ID}
-  options:
+  # Step 1: Validate Terraform configuration
+  - name: 'gcr.io/cloud-builders/terraform'
+    id: 'tf-validate'
+    args:
+      - 'validate'
+    dir: 'terraform'
+
+  # Step 2: Format check
+  - name: 'gcr.io/cloud-builders/terraform'
+    id: 'tf-fmt'
+    args:
+      - 'fmt'
+      - '-check'
+      - '-recursive'
+    dir: 'terraform'
+
+  # Step 3: Terraform plan (for PR checks)
+  - name: 'gcr.io/cloud-builders/terraform'
+    id: 'tf-plan'
+    args:
+      - 'plan'
+      - '-out=tfplan'
+    dir: 'terraform'
     env:
-    - '_IMAGE=$_IMAGE'
-    dynamic_substitutions: true
-    logging: CLOUD_LOGGING_ONLY
+      - 'TF_VAR_project_id=${PROJECT_ID}'
+    onFailure: ['CONTINUE']
+
+  # Step 4: Run tests (if applicable)
+  - name: 'gcr.io/cloud-builders/gke-deploy'
+    id: 'run-tests'
+    args:
+      - 'run'
+      - 'tests'
+    onFailure: ['CONTINUE']
+
+  # Step 5: Apply Terraform (only on main branch)
+  - name: 'gcr.io/cloud-builders/terraform'
+    id: 'tf-apply'
+    args:
+      - 'apply'
+      - '-auto-approve'
+      - 'tfplan'
+    dir: 'terraform'
+    env:
+      - 'TF_VAR_project_id=${PROJECT_ID}'
+    onFailure: ['CONTINUE']
+
+# Only apply on main branch
+onFailure: ['CONTINUE']
+
+options:
+  machineType: 'N1_HIGHCPU_8'
+  logging: CLOUD_LOGGING_ONLY
+
+substitutions:
+  _TERRAFORM_VERSION: '1.5.0'
+
+images:
+  - 'gcr.io/$PROJECT_ID/magic-modules:latest'
+
+artifacts:
+  objects:
+    location: 'gs://${PROJECT_ID}_cloudbuild/terraform'
+    paths:
+      - 'terraform/tfplan'
+      - 'terraform/tfstate'
+
+timeout: '3600s'
