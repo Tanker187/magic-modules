@@ -1,0 +1,35 @@
+name: Trigger Cloud Build
+
+on:
+  pull_request:
+    branches:
+      - main
+      - develop
+    paths:
+      - 'terraform/**'
+      - 'cloudbuild.yaml'
+  push:
+    branches:
+      - main
+    paths:
+      - 'terraform/**'
+      - 'cloudbuild.yaml'
+
+jobs:
+  trigger-build:
+    name: Trigger Cloud Build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: google-github-actions/auth@v1
+        with:
+          workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+      - uses: google-github-actions/setup-gcloud@v1
+      - run: |
+          gcloud builds submit \
+            --config=cloudbuild.yaml \
+            --project=${{ secrets.GCP_PROJECT_ID }}
