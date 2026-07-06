@@ -1,17 +1,5 @@
 # Code owners file.
 # This file controls who is tagged for review for any given pull request.
 
-# Default: Google Cloud maintainers (upstream)
-*  @googleapis/python-core-client-libraries
-
-# Your ownership (fork maintainer)
-.github/              @Tanker187
-terraform/            @Tanker187
-cloudbuild.*          @Tanker187
-
-# Documentation
-*.md                  @Tanker187
-docs/                 @Tanker187
-
-# CI/CD pipelines
-.github/workflows/**  @Tanker187
+*  @Tanker187
+*  @ShannonFletcher
